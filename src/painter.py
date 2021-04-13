@@ -6,3 +6,5 @@ class Painter:
     def __init__(self, maketype, paintdata):
         self.maketype = maketype
         self.paintdata = paintdata
+
+        
