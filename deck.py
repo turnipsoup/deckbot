@@ -1,4 +1,4 @@
-from src import library, librarian
+from src import library, librarian, painter
 
 deck = [x.strip() for x in open('./deck.txt', 'r').readlines() if x != '\n']
 
@@ -11,6 +11,12 @@ for i in range(10000):
     hands.append(library.draw(7))
     library.reset_deck()
 
-librarian = librarian.Librarian(hands, {'land': ['Needleverge Pathway', 'Wind-Scarred Crag']})
+custom_defs = {
+    'land': ['Needleverge Pathway', 'Wind-Scarred Crag']
+    }
 
-print(librarian.average_all_selected())
+librarian = librarian.Librarian(hands, custom_defs)
+
+averages, totals = librarian.average_all_selected()
+
+print(averages)

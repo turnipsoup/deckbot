@@ -2,7 +2,7 @@ import random, math
 import numpy as np
 
 class Librarian:
-    def __init__(self, cardslists, custom_defs={}):
+    def __init__(self, hands, custom_defs={}):
         '''
         Takes a lists of lists of cards.
         Generally this is just hands (7 cards), but you can get weird if you want.
@@ -20,21 +20,6 @@ class Librarian:
             'Island'
         ]
         self.custom_defs = custom_defs
-
-    def land_averages(self):
-        '''
-        Takes a list of hands and returns some averages about the 
-        number of each type of land over the course of all of the draws.
-
-        Currently supports:
-            Average draw over all
-        '''
-
-        bldata = {}
-
-
-
-        return bldata
 
     def average_all_selected(self, checklist=[]):
         '''
@@ -67,4 +52,4 @@ class Librarian:
             averages[card]  = np.mean(cards[card])
             averages['total'] += averages[card]
 
-        return averages
+        return averages, cards
