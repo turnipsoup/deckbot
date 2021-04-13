@@ -1,0 +1,43 @@
+Deck
+3 Inspiring Commander (ANB) 11
+3 Goblin Gang Leader (ANB) 70
+4 Hallowed Priest (ANB) 9
+1 Plains (XLN) 262
+4 Pacifism (ANB) 16
+1 Confront the Assault (ANB) 6
+4 Charmed Stray (ANB) 5
+3 Impassioned Orator (ANB) 10
+3 Fencing Ace (ANB) 7
+3 Angel of Vitality (ANB) 1
+4 Tactical Advantage (ANB) 22
+1 Angel of Vitality (M20) 4
+1 Impassioned Orator (RNA) 12
+1 Inspiring Commander (ANA) 4
+2 Wind-Scarred Crag (IKO) 258
+1 Mountain (DAR) 263
+1 Mountain (M19) 276
+1 Mountain (WAR) 259
+1 Mountain (RNA) 263
+1 Mountain (GRN) 263
+1 Mountain (ELD) 262
+1 Mountain (ELD) 265
+1 Plains (DAR) 251
+1 Plains (DAR) 252
+1 Plains (XLN) 260
+1 Plains (ELD) 250
+1 Plains (THB) 278
+1 Plains (IKO) 261
+1 Plains (IKO) 260
+3 Needleverge Pathway (ZNR) 263
+1 Plains (M21) 261
+3 Tin Street Cadet (ANB) 87
+4 Shock (M19) 156
+1 Mountain (ELD) 263
+
+Sideboard
+1 Demotion (GRN) 9
+1 Gird for Battle (GRN) 12
+1 Dauntless Bodyguard (DAR) 14
+1 Goblin Motivator (M19) 143
+1 Goblin Banneret (GRN) 102
+1 Goblin Arsonist (M21) 147

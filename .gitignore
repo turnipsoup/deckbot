@@ -1,0 +1,9 @@
+# Vscode
+.vscode/
+
+# venv
+env/
+
+# Python .pyc files
+__pycache__/
+
