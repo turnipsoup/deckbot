@@ -2,7 +2,7 @@ import random, math
 import numpy as np
 
 class Librarian:
-    def __init__(self, hands, custom_defs={}):
+    def __init__(self, hands, library, custom_defs={}):
         '''
         Takes a lists of lists of cards.
         Generally this is just hands (7 cards), but you can get weird if you want.
@@ -12,6 +12,7 @@ class Librarian:
         '''
         self.name = 'Librarian'
         self.hands = hands
+        self.library = library
         self.basic_lands = [
             'Plains',
             'Mountain',
@@ -35,11 +36,6 @@ class Librarian:
         By default it does everything that is defined as a Basic Land card.
         '''
 
-        if len(checklist) < 1:
-            checklist = self.basic_lands
-        if 'land' in self.custom_defs:
-            checklist.extend(self.custom_defs['land'])
-
         cards = {}
 
         # Raw count
@@ -58,3 +54,5 @@ class Librarian:
             averages['total'] += averages[card]
 
         return averages, cards
+
+    def average_all_selected_lands(self):

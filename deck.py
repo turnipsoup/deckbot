@@ -1,37 +1,52 @@
 from src import library, librarian, painter, card
-import sqlite3, os, logging, json
+import sqlite3, os, logging, json, discord
+
+# Load config file
+config_dir = './config'
+config = json.loads(open(f"{config_dir}/config.json", "r").read())
+discord_api_token = open(f'{config_dir}/bot_token.token').read()
 
 logging.basicConfig(
     level=logging.DEBUG,
     format="%(asctime)s|%(levelname)s|%(message)s"
     )
 
-# Load config file
-config = json.loads(open("./config/config.json", "r").read())
 
-# Define the raw deck
-deck = [x.strip() for x in open('./deck.txt', 'r').readlines() if x != '\n']
+# Initiate discord client
+client = discord.Client()
 
-# Create the library from the raw deck
-library = library.Library(deck, config)
+@client.event
+async def on_ready():
+    logging.info(f'We are logged in as {client.user}')
 
-# Initiate global
-hands = []
+@client.event
+async def on_message(message):
+    if message.author == client.user:
+        return
 
-# Draw 100000 times
-for i in range(config['iterations']):
-    library.shuffle()
-    hands.append(library.draw(7))
-    library.reset_deck()
+    if message.content.startswith('~deckbot'):
 
-custom_defs = {
-    'land': ['Needleverge Pathway', 'Wind-Scarred Crag']
-    }
+        deck = message.content.replace('~deckbot', '')
+        deck = [x for x in deck.split("\n") if x != '']
+        deck_library = library.Library(deck, config)
 
-librarian = librarian.Librarian(hands, custom_defs)
+        # Initiate global
+        hands = []
 
-averages, totals = librarian.average_all_selected()
+        # Draw 100000 times
+        for i in range(config['iterations']):
+            deck_library.shuffle()
+            hands.append(deck_library.draw(7))
+            deck_library.reset_deck()
 
-print(averages)
+        custom_defs = {
+            'land': ['Needleverge Pathway', 'Wind-Scarred Crag']
+            }
 
-print(len(library.card_details.keys()))
+        deck_librarian = librarian.Librarian(hands, deck_library)
+
+        averages, totals = deck_librarian.average_all_lands()
+
+        await message.channel.send(averages)
+
+client.run(discord_api_token)
