@@ -25,7 +25,7 @@ async def on_message(message):
     if message.author == client.user:
         return
 
-    if message.content.startswith('~deckbot'):
+    if message.content.startswith(config['call_name']):
 
         # Handle requests for land averages
         if message.content.split()[1] == 'landavg':
@@ -36,7 +36,6 @@ async def on_message(message):
             for result in mage_response.keys():
                 if result != 'total':
                     final_mage_response += f'\t{result}: {mage_response[result]}\n'
-
                 else:
                     final_mage_response += f'Total: {mage_response[result]}\n'
 

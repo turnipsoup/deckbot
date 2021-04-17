@@ -9,7 +9,7 @@ class Mage:
         '''
         If the user requests an average of lands per hand
         '''
-        deck = self.message.replace('~deckbot', '').replace('landavg', '')
+        deck = self.message.replace(self.config['call_name'], '').replace('landavg', '')
         deck = [x for x in deck.split("\n") if len(x) > 1]
         deck_library = library.Library(deck, self.config)
 

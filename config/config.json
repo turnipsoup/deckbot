@@ -1,4 +1,5 @@
 {
+    "call_name": "~deckbot-dev",
     "cache_dir": "./cache",
     "logging_level": "debug",
     "iterations": 10000,
