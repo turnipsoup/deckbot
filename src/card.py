@@ -1,5 +1,5 @@
 
-import requests, json, sqlite3, logging, string
+import requests, json, sqlite3, logging, string, os
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -13,20 +13,19 @@ api_version = 'v1'
 
 
 class Card:
-
-    def __init__(self, name='Blank'):
+    def __init__(self, config, name='Forest'):
         self.name = name
 
         # Clean name for use as a file name, or whatever
         self.clean_name = self.name.translate(str.maketrans('', '', string.punctuation)).replace(" ", "_")
 
-        self.cache_dir = './cache'
+        self.cache_dir = config['cache_dir']
 
         
 
-        self.cache_card()
-        self.get_local_info()
-        self.fill_vals()
+        self.cache_card() # Cache card if it is not cached
+        self.get_local_info() # Load locally cached chard
+        self.fill_vals() # Unmarshal card into inherit values for the class
 
     def get_info(self):
         '''
@@ -96,6 +95,11 @@ class Card:
 
         Returns True if card was cached. Returns False if it exited.
         '''
+        if os.path.isdir(self.cache_dir):
+            pass
+        else:
+            os.mkdir(self.cache_dir)
+
         db = f'{self.cache_dir}/cards.db'
         connection = sqlite3.connect(db)
         cursor = connection.cursor()
@@ -109,7 +113,7 @@ class Card:
         select = f"""SELECT * FROM cards WHERE name = '{self.clean_name}'"""
 
         if len(cursor.execute(f"""SELECT * FROM cards WHERE name LIKE '%{self.clean_name}%'""").fetchall()) > 0:
-            logging.info(f'Card {self.name} is already cached!')
+            logging.info(f'Card {self.name} loaded from cache')
             connection.close()
             return False
         
@@ -124,15 +128,19 @@ class Card:
         return True
 
     def write_card(self):
+        '''
+        Write card to cache directory
+        '''
         with open(f'{self.cache_dir}/{self.clean_name}.json', 'w') as f:
             f.write(json.dumps(self.card_info))
             f.close()
 
     def get_local_info(self):
-
+        '''
+        Load card from cache directory
+        '''
         card_data =  json.loads(open(f'{self.cache_dir}/{self.clean_name}.json', 'r').read())
         self.card_info = card_data
-        self.fill_vals()
         
         
             
