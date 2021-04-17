@@ -1,4 +1,4 @@
-from src import library, librarian, painter
+from src import library, librarian, painter, card
 
 deck = [x.strip() for x in open('./deck.txt', 'r').readlines() if x != '\n']
 
@@ -20,3 +20,8 @@ librarian = librarian.Librarian(hands, custom_defs)
 averages, totals = librarian.average_all_selected()
 
 print(averages)
+
+testcard = card.Card("Hallowed Priest")
+testcard.get_info()
+
+print(testcard.card_info)

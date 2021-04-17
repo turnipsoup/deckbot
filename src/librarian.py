@@ -17,7 +17,12 @@ class Librarian:
             'Mountain',
             'Forest',
             'Swamp',
-            'Island'
+            'Island',
+            'Snow-Covered Plains',
+            'Snow-Covered Mountain',
+            'Snow-Covered Forest',
+            'Snow-Covered Swamp',
+            'Snow-Covered Island'
         ]
         self.custom_defs = custom_defs
 
