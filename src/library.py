@@ -1,11 +1,12 @@
 import random
+from . import card
 
 class Library:
     """
     Class for loading and manipulating a deck copied via the MTG: Arena
     'Export Deck' feature.
     """
-    def __init__(self, deck):
+    def __init__(self, deck, config):
         """
         Takes the deck passed during the initialization of the class and creates
         five variables:
@@ -14,6 +15,8 @@ class Library:
             - self.sideboard: A list of tuples of all cards in the sideboard, with card count
             - self.decklist: A fully enmuerated decklist of self.main_deck
             - self.sideboardlist: A fully enmuerated decklist of self.sideboard
+
+        Also requires the config file global varaible.
         """
 
         self.deck = [x.strip() for x in deck]
@@ -32,6 +35,13 @@ class Library:
         self.decklist_backup = self.decklist.copy() # Create a backup copy so we can restore
         self.sideboardlist = self.make_deck_list(self.sideboard)
         self.sideboardlist_backup = self.sideboardlist.copy() # Create a backup copy so we can restore
+        self.card_details = {}
+        
+        # Load all cards either from cache or API, store in dictionary by card clean_name
+        # Use a set so we only get one of each card for efficiency
+        for mtgcard in set(self.decklist):
+            cached_card = card.Card(config, mtgcard)
+            self.card_details[cached_card.name] = cached_card
 
     def make_deck_list(self, deck):
         """
