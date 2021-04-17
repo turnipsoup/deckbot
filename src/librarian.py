@@ -53,6 +53,15 @@ class Librarian:
             averages[card]  = np.mean(cards[card])
             averages['total'] += averages[card]
 
-        return averages, cards
+        return averages
 
-    def average_all_selected_lands(self):
+    def average_all_lands(self):
+        lands = self.basic_lands
+
+        for card in self.library.card_details:
+            if "Land" in self.library.card_details[card].types:
+                lands.append(card)
+
+        averages = self.average_all_selected(lands)
+
+        return averages

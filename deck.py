@@ -1,4 +1,4 @@
-from src import library, librarian, painter, card
+from src import library, librarian, painter, card, mage
 import sqlite3, os, logging, json, discord
 
 # Load config file
@@ -12,12 +12,13 @@ logging.basicConfig(
     )
 
 
+
 # Initiate discord client
 client = discord.Client()
 
 @client.event
 async def on_ready():
-    logging.info(f'We are logged in as {client.user}')
+    logging.info(f'We are logged in as {client.user} to {client.guilds}')
 
 @client.event
 async def on_message(message):
@@ -26,27 +27,11 @@ async def on_message(message):
 
     if message.content.startswith('~deckbot'):
 
-        deck = message.content.replace('~deckbot', '')
-        deck = [x for x in deck.split("\n") if x != '']
-        deck_library = library.Library(deck, config)
+        # Handle requests for land averages
+        if message.content.split()[1] == 'landavg':
+            mage_response = mage.Mage(message.content, config).get_land_average()
+            
 
-        # Initiate global
-        hands = []
-
-        # Draw 100000 times
-        for i in range(config['iterations']):
-            deck_library.shuffle()
-            hands.append(deck_library.draw(7))
-            deck_library.reset_deck()
-
-        custom_defs = {
-            'land': ['Needleverge Pathway', 'Wind-Scarred Crag']
-            }
-
-        deck_librarian = librarian.Librarian(hands, deck_library)
-
-        averages, totals = deck_librarian.average_all_lands()
-
-        await message.channel.send(averages)
+        await message.channel.send(mage_response)
 
 client.run(discord_api_token)
