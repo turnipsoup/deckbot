@@ -2,13 +2,11 @@ import random, math
 import numpy as np
 
 class Librarian:
-    def __init__(self, hands, library, custom_defs={}):
+    def __init__(self, hands, library):
         '''
         Takes a lists of lists of cards.
         Generally this is just hands (7 cards), but you can get weird if you want.
         
-        self.custom_defs lets you label cards specifically, such as:
-            {Lands: }
         '''
         self.name = 'Librarian'
         self.hands = hands
@@ -25,7 +23,15 @@ class Librarian:
             'Snow-Covered Swamp',
             'Snow-Covered Island'
         ]
-        self.custom_defs = custom_defs
+
+    def clean_values(self, values_dict, remove_value=0.0):
+        # Remove values that are not wanted in a dictionary
+        clean_averages = {}
+        for k,v in values_dict.items():
+            if v != remove_value:
+                clean_averages[k] = v
+
+        return clean_averages
 
     def average_all_selected(self, checklist=[]):
         '''
@@ -33,10 +39,18 @@ class Librarian:
         2. Takes a list of card names to get an average of their presence 
         in each object over the entire list of lists
 
-        By default it does everything that is defined as a Basic Land card.
+        By default it does everything that is not a land card in self.library.decklist
         '''
 
         cards = {}
+
+        # If checklist is blank, by default check all non-land cards.
+        if len(checklist) < 1:
+
+            for card in self.library.decklist:
+                if card not in self.basic_lands:
+                    if 'Land' not in self.library.card_details[card].types:
+                        checklist.append(card)
 
         # Raw count
         for card in checklist:
@@ -56,6 +70,9 @@ class Librarian:
         return averages
 
     def average_all_lands(self):
+        '''
+        Runs self.average_all_selected but for only land types.
+        '''
         lands = self.basic_lands
 
         for card in self.library.card_details:

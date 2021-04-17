@@ -2,7 +2,5 @@
     "call_name": "~deckbot-dev",
     "cache_dir": "./cache",
     "logging_level": "debug",
-    "iterations": 10000,
-    "discord_client_id": "833049659118321696",
-    "discord_public_key": "aca40275dda228232333e4446d962d8c300e0997f51be1de06396954248be3e0"
+    "iterations": 10000
 }
