@@ -11,8 +11,6 @@ logging.basicConfig(
     format="%(asctime)s|%(levelname)s|%(message)s"
     )
 
-
-
 # Initiate discord client
 client = discord.Client()
 
@@ -29,16 +27,18 @@ async def on_message(message):
 
         # Handle requests for land averages
         if message.content.split()[1] == 'landavg':
-            mage_response = mage.Mage(message.content, config).get_land_average()
-            
-            # Pretty it up even more
-            final_mage_response = f'Average Land Per Starting Hand Over {config["iterations"]} Draws\n--------\n'
-            for result in mage_response.keys():
-                if result != 'total':
-                    final_mage_response += f'\t{result}: {mage_response[result]}\n'
-                else:
-                    final_mage_response += f'Total: {mage_response[result]}\n'
+            deck_mage = mage.Mage(message.content, config)
+            mage_response = deck_mage.get_land_average()
 
-        await message.channel.send(final_mage_response)
+        if message.content.split()[1] == 'nonlandavg':
+            deck_mage = mage.Mage(message.content, config)
+            mage_response = deck_mage.get_specific_average()
+
+        if message.content.split()[1] == 'fullavg':
+            deck_mage = mage.Mage(message.content, config)
+            mage_response = deck_mage.get_land_average() + '\n\n'
+            mage_response += deck_mage.get_specific_average()
+
+        await message.channel.send(mage_response)
 
 client.run(discord_api_token)
