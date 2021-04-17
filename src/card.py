@@ -1,10 +1,4 @@
-
 import requests, json, sqlite3, logging, string, os
-
-logging.basicConfig(
-    level=logging.DEBUG,
-    format="%(asctime)s|%(levelname)s|%(message)s"
-    )
 
 
 # Define some globals
