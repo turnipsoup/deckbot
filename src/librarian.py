@@ -32,7 +32,7 @@ class Librarian:
         2. Takes a list of card names to get an average of their presence 
         in each object over the entire list of lists
 
-        By default it does everything that is defined as a Land card.
+        By default it does everything that is defined as a Basic Land card.
         '''
 
         if len(checklist) < 1:

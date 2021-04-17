@@ -7,3 +7,5 @@ env/
 # Python .pyc files
 __pycache__/
 
+# For testing cache
+cache/
