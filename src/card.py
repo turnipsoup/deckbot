@@ -55,15 +55,41 @@ class Card:
         except:
             self.colors = ['Colorless']
 
-        self.cmc = self.card_info['cmc']
-        self.color_identity = self.card_info['colorIdentity']
-        self.types = self.card_info['types']
-        self.rarity = self.card_info['rarity']
-        self.set = self.card_info['set']
-        self.set_name = self.card_info['setName']
-        self.text = self.card_info['text']
+        try:
+            self.cmc = self.card_info['cmc']
+        except:
+            self.cmc = None
 
-        # Not every card has these
+        try:
+            self.color_identity = self.card_info['colorIdentity']
+        except:
+            self.color_identity = None
+
+        try:
+            self.types = self.card_info['types']
+        except:
+            self.color_identity = ['Typeless']
+
+        try:
+            self.rarity = self.card_info['rarity']
+        except:
+            self.rarity = None
+
+        try:
+            self.set = self.card_info['set']
+        except:
+            self.set = None
+
+        try:
+            self.set_name = self.card_info['setName']
+        except:
+            self.set_name = None
+
+        try:
+            self.text = self.card_info['text']
+        except:
+            self.text = None
+            
         try:
             self.power = self.card_info['power']
         except:
