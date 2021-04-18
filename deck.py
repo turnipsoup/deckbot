@@ -1,20 +1,22 @@
 from src import library, librarian, painter, card, mage, setup_logger
 import sqlite3, os, logging, json, discord, sys
 
-
+# Instantiate logger
+logger = setup_logger.logger
 
 # Load config file
 config_dir = './config'
 config = json.loads(open(f"{config_dir}/config.json", "r").read())
+logger.info("Successfully loaded config")
 discord_api_token = open(f'{config_dir}/bot_token.token').read()
+logger.info("Successfully loaded Discord API Token")
 
 # Make log directory if it does not exist:
 if os.path.isdir(config['logging_directory']):
     pass
 else:
     os.mkdir(config['logging_directory'])
-
-logger = setup_logger.logger
+    logger.info(f"Created logging directory at {config['logging_directory']}")
 
 # Define known actions
 known_actions = [

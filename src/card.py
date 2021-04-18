@@ -14,10 +14,8 @@ class Card:
 
         # Clean name for use as a file name, or whatever
         self.clean_name = self.name.translate(str.maketrans('', '', string.punctuation)).replace(" ", "_")
-
         self.cache_dir = config['cache_dir']
-
-        
+        self.cache_file_name = f'{config["cache_dir"]}/{self.clean_name}.json'
 
         self.cache_card() # Cache card if it is not cached
         self.get_local_info() # Load locally cached chard
@@ -134,8 +132,8 @@ class Card:
 
         select = f"""SELECT * FROM cards WHERE name = '{self.clean_name}'"""
 
-        if len(cursor.execute(f"""SELECT * FROM cards WHERE name LIKE '%{self.clean_name}%'""").fetchall()) > 0:
-            logging.info(f'Card {self.name} loaded from cache')
+        if len(cursor.execute(f"""SELECT * FROM cards WHERE name = '{self.clean_name}'""").fetchall()) > 0:
+            logger.info(f'Card {self.name} loaded from cache')
             connection.close()
             return False
 
@@ -161,10 +159,51 @@ class Card:
         '''
         Load card from cache directory
         '''
-        card_data =  json.loads(open(f'{self.cache_dir}/{self.clean_name}.json', 'r').read())
-        self.card_info = card_data
+
+        try:
+
+            try:
+                card_data =  json.loads(open(f'{self.cache_dir}/{self.clean_name}.json', 'r').read())
+                self.card_info = card_data
+            except:
+                logger.error(f"Unable to load {self.cache_file_name}. Attempting to regenerate cache.")
+                self.renew_cache()
+
+            
+
+        except:
+            logger.exception("Unable to load local cache or renew local cache")
+
+    def renew_cache(self):
+        '''
+        Clears out the card info and files and tries to renew the cache of it.
+        '''
+
+        db = f'{self.cache_dir}/cards.db'
+        connection = sqlite3.connect(db)
+        cursor = connection.cursor()
+
+        try:
+            # Delete from the card.db
+            cursor.execute(f"DELETE FROM cards WHERE name = '{self.clean_name}';")
+            cursor.execute('COMMIT;')
+            logger.info(f"Deleted {self.name} from local cards database")
+
+            try:
+                os.remove(self.cache_file_name)
+            except:
+                logger.info(f"Could not find {self.cache_file_name}, continuing with cache renewal")
+
+        except:
+            logger.exception(f"Error occurred when trying to renew card cache for {self.name}")
+
         
-        
+        connection.close()
+
+        try:
+            self.cache_card()
+        except:
+            logger.exception(f"Cannot renew cache for card {self.name}.")
             
         
 
