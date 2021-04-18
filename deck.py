@@ -32,7 +32,7 @@ async def on_message(message):
 
         try:
 
-            logging.info(f'Request {message.content.split()[2]} initiated by {message.author}')
+            logging.info(f'Request {message.content.split()[1]} initiated by {message.author}')
             logging.debug(f'Request: {message.content}')
 
             # Handle requests for land averages
