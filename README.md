@@ -22,7 +22,7 @@ Next, you will want to clone the directory, `cd` into it, and then make your ven
 ```
 git clone git@github.com:turnipsoup/deckbot.git
 cd deckbot
-mkdir venv
+mkdir env
 python3 -m venv env
 source env/bin/active
 pip install -r requirements.txt
