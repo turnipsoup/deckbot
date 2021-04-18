@@ -13,13 +13,16 @@ class Card:
         self.name = name
 
         # Clean name for use as a file name, or whatever
-        self.clean_name = self.name.translate(str.maketrans('', '', string.punctuation)).replace(" ", "_")
+        self.clean_name = self.cleanup_name(self.name)
         self.cache_dir = config['cache_dir']
         self.cache_file_name = f'{config["cache_dir"]}/{self.clean_name}.json'
 
         self.cache_card() # Cache card if it is not cached
         self.get_local_info() # Load locally cached chard
         self.fill_vals() # Unmarshal card into inherit values for the class
+
+    def cleanup_name(self, namestring):
+        return namestring.translate(str.maketrans('', '', string.punctuation)).replace(" ", "_")
 
     def get_info(self):
         '''
@@ -28,9 +31,17 @@ class Card:
         card_endpoint = f'{api_endpoint}/{api_version}/cards?name={self.name}'
         
         try:
-            r = requests.get(card_endpoint).json()['cards'][0]
+            r = requests.get(card_endpoint).json()['cards']
+            logger.info(f"Recieved info from {card_endpoint} of length {len(r)}")
 
-            self.card_info = r
+
+            for card in r:
+                logger.debug("Iterating over all cards returned")
+                logger.debug(card)
+                if self.cleanup_name(card['name']) == self.clean_name:
+                    self.card_info = card
+                    logger.debug("Card info with matching name found")
+                    break
 
             logger.info(f'Card {self.name} fetched from the API.')
         except:
@@ -105,6 +116,11 @@ class Card:
         except:
             self.sub_types = None
 
+        try:
+            self.image_url = self.card_info['imageUrl']
+        except:
+            self.image_url = None
+
     def cache_card(self):
         '''
         Caches card if it does not exist.
@@ -137,15 +153,20 @@ class Card:
             connection.close()
             return False
 
-        self.get_info()
-        self.write_card()
+        try:
+            self.get_info()
+            self.write_card()
 
-        cursor.execute('INSERT INTO cards(name, path) VALUES(?,?)', (self.clean_name, f'{self.cache_dir}/{self.clean_name}.json'))
-        cursor.execute('COMMIT')
+            cursor.execute('INSERT INTO cards(name, path) VALUES(?,?)', (self.clean_name, f'{self.cache_dir}/{self.clean_name}.json'))
+            cursor.execute('COMMIT')
 
-        logger.info(f'Card {self.name} has been cached')
-        connection.close()
-        return True
+            logger.info(f'Card {self.name} has been cached')
+            connection.close()
+            return True
+
+        except:
+            logger.exception("could not cache card successfully")
+            return False
 
     def write_card(self):
         '''

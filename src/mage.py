@@ -21,9 +21,8 @@ class Mage:
             self.deck = self.deck.replace(method, '')
         
         self.deck =  [x for x in self.deck.split("\n") if len(x) > 1]
-
-
         self.deck_library = library.Library(self.deck, self.config)
+        
 
     def draw_hands(self):
         '''
@@ -39,16 +38,21 @@ class Mage:
             hands.append(self.deck_library.draw(7))
             self.deck_library.reset_deck()
 
-        return hands
+        self.hands = hands
 
     def get_land_average(self):
         '''
         If the user requests an average of lands per hand
         '''
+        if not self.hands:
+            hands = self.draw_hands()
 
-        hands = self.draw_hands()
+            self.deck_librarian = librarian.Librarian(self.hands, self.deck_library)
 
-        self.deck_librarian = librarian.Librarian(hands, self.deck_library)
+        if not self.deck_librarian:
+           self.deck_librarian = librarian.Librarian(self.hands, self.deck_library)
+
+
         averages = self.deck_librarian.average_all_lands()
 
         clean_averages = self.deck_librarian.clean_values(averages)
@@ -68,9 +72,15 @@ class Mage:
         If the user requests an average of lands per hand
         '''
 
-        hands = self.draw_hands()
+        if not self.hands:
+            hands = self.draw_hands()
 
-        self.deck_librarian = librarian.Librarian(hands, self.deck_library)
+            self.deck_librarian = librarian.Librarian(self.hands, self.deck_library)
+
+        if not self.deck_librarian:
+           self.deck_librarian = librarian.Librarian(self.hands, self.deck_library)
+
+        
         averages = self.deck_librarian.average_all_selected()
 
         clean_averages = self.deck_librarian.clean_values(averages)
@@ -107,12 +117,18 @@ class Mage:
         final_mage_response = 'Card Info\n--------\n'
         mtgcard = card.Card(self.config, ' '.join(self.message.split()[2:]))
 
-        final_mage_response += 'Name: ' + mtgcard.name + '\n'
-        final_mage_response += '\t' + 'Types: ' + ', '.join(mtgcard.types) + '\n'
-        final_mage_response += '\t' + 'Mana Cost: ' + ''.join(mtgcard.mana_cost) + '\n'
-        final_mage_response += '\t' + 'CMC: ' + str(mtgcard.cmc) + '\n'
-        final_mage_response += '\t' + 'P/T: ' + str(mtgcard.power) + '/' + str(mtgcard.toughness) + '\n'
-        final_mage_response += '\t' + 'Text: ' + str(mtgcard.text) + '\n'
-        final_mage_response += '\t' + 'Rarity: ' + str(mtgcard.rarity) + '\n'
+        final_mage_response += '**Name**: ' + mtgcard.name + '\n'
+        final_mage_response += '\t' + '**Types**: ' + ', '.join(mtgcard.types) + '\n'
+
+        if mtgcard.mana_cost != None:
+            final_mage_response += '\t' + '**Mana Cost**: ' + ''.join(mtgcard.mana_cost) + '\n'
+        else:
+            final_mage_response += '\t' + '**Mana Cost**: ' + ' None' + '\n'
+
+        final_mage_response += '\t' + '**CMC**: ' + str(mtgcard.cmc) + '\n'
+        final_mage_response += '\t' + '**P/T**: ' + str(mtgcard.power) + '/' + str(mtgcard.toughness) + '\n'
+        final_mage_response += '\t' + '**Text**: ' + str(mtgcard.text) + '\n'
+        final_mage_response += '\t' + '**Rarity**: ' + str(mtgcard.rarity) + '\n'
+        final_mage_response += '\t' + '**Image URL**: ' + str(mtgcard.image_url) + '\n'
 
         return final_mage_response
