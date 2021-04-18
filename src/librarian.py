@@ -82,3 +82,9 @@ class Librarian:
         averages = self.average_all_selected(lands)
 
         return averages
+
+    def sample_hands(self, num_hands=5):
+        '''
+        Returns the top X hands of the self.hands.
+        '''
+        return self.hands[:num_hands]
