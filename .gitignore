@@ -11,4 +11,7 @@ __pycache__/
 cache/
 
 # API secrets
-config/*.token
+*.token
+
+# Logs
+logs/

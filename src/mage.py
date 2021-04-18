@@ -1,5 +1,7 @@
 from . import library, librarian, card, painter
-import logging
+from . import setup_logger
+
+logger = setup_logger.logger
 
 class Mage:
     def __init__(self, message, config):

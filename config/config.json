@@ -2,5 +2,8 @@
     "call_name": "~deckbot-dev",
     "cache_dir": "./cache",
     "logging_level": 10,
-    "iterations": 10000
+    "iterations": 10000,
+    "logging_directory": "./logs",
+    "logging_max_file_size": 10000000,
+    "logging_backup_count": 5
 }

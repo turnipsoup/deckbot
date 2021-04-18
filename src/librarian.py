@@ -1,5 +1,8 @@
-import random, math, logging
+import random, math
 import numpy as np
+from . import setup_logger
+
+logger = setup_logger.logger
 
 
 class Librarian:

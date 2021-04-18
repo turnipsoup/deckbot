@@ -1,4 +1,7 @@
-import requests, json, sqlite3, logging, string, os
+import requests, json, sqlite3, string, os
+from . import setup_logger
+
+logger = setup_logger.logger
 
 # Define some globals
 api_endpoint = 'https://api.magicthegathering.io'
@@ -31,9 +34,9 @@ class Card:
 
             self.card_info = r
 
-            logging.info(f'Card {self.name} fetched from the API.')
+            logger.info(f'Card {self.name} fetched from the API.')
         except:
-            logging.error(f'Failed to fetch card {self.name} from {card_endpoint}')
+            logger.error(f'Failed to fetch card {self.name} from {card_endpoint}')
 
     def fill_vals(self, cache_dict={}):
         '''
@@ -125,9 +128,9 @@ class Card:
 
         try:
             cursor.execute('''CREATE TABLE cards (name TEXT, path TEXT)''')
-            logging.info(f'Created database {db}')
+            logger.info(f'Created database {db}')
         except:
-            logging.debug(f'Database {db} already exists, loading!')
+            logger.debug(f'Database {db} already exists, loading!')
 
         select = f"""SELECT * FROM cards WHERE name = '{self.clean_name}'"""
 
@@ -142,7 +145,7 @@ class Card:
         cursor.execute('INSERT INTO cards(name, path) VALUES(?,?)', (self.clean_name, f'{self.cache_dir}/{self.clean_name}.json'))
         cursor.execute('COMMIT')
 
-        logging.info(f'Card {self.name} has been cached')
+        logger.info(f'Card {self.name} has been cached')
         connection.close()
         return True
 
