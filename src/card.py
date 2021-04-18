@@ -1,4 +1,7 @@
-import requests, json, sqlite3, logging, string, os
+import requests, json, sqlite3, string, os
+from . import setup_logger
+
+logger = setup_logger.logger
 
 # Define some globals
 api_endpoint = 'https://api.magicthegathering.io'
@@ -10,15 +13,16 @@ class Card:
         self.name = name
 
         # Clean name for use as a file name, or whatever
-        self.clean_name = self.name.translate(str.maketrans('', '', string.punctuation)).replace(" ", "_")
-
+        self.clean_name = self.cleanup_name(self.name)
         self.cache_dir = config['cache_dir']
-
-        
+        self.cache_file_name = f'{config["cache_dir"]}/{self.clean_name}.json'
 
         self.cache_card() # Cache card if it is not cached
         self.get_local_info() # Load locally cached chard
         self.fill_vals() # Unmarshal card into inherit values for the class
+
+    def cleanup_name(self, namestring):
+        return namestring.translate(str.maketrans('', '', string.punctuation)).replace(" ", "_")
 
     def get_info(self):
         '''
@@ -27,13 +31,21 @@ class Card:
         card_endpoint = f'{api_endpoint}/{api_version}/cards?name={self.name}'
         
         try:
-            r = requests.get(card_endpoint).json()['cards'][0]
+            r = requests.get(card_endpoint).json()['cards']
+            logger.info(f"Recieved info from {card_endpoint} of length {len(r)}")
 
-            self.card_info = r
 
-            logging.info(f'Card {self.name} fetched from the API.')
+            for card in r:
+                logger.debug("Iterating over all cards returned")
+                logger.debug(card)
+                if self.cleanup_name(card['name']) == self.clean_name:
+                    self.card_info = card
+                    logger.debug("Card info with matching name found")
+                    break
+
+            logger.info(f'Card {self.name} fetched from the API.')
         except:
-            logging.error(f'Failed to fetch card {self.name} from {card_endpoint}')
+            logger.error(f'Failed to fetch card {self.name} from {card_endpoint}')
 
     def fill_vals(self, cache_dict={}):
         '''
@@ -104,6 +116,11 @@ class Card:
         except:
             self.sub_types = None
 
+        try:
+            self.image_url = self.card_info['imageUrl']
+        except:
+            self.image_url = None
+
     def cache_card(self):
         '''
         Caches card if it does not exist.
@@ -125,26 +142,31 @@ class Card:
 
         try:
             cursor.execute('''CREATE TABLE cards (name TEXT, path TEXT)''')
-            logging.info(f'Created database {db}')
+            logger.info(f'Created database {db}')
         except:
-            logging.debug(f'Database {db} already exists, loading!')
+            logger.debug(f'Database {db} already exists, loading!')
 
         select = f"""SELECT * FROM cards WHERE name = '{self.clean_name}'"""
 
-        if len(cursor.execute(f"""SELECT * FROM cards WHERE name LIKE '%{self.clean_name}%'""").fetchall()) > 0:
-            logging.info(f'Card {self.name} loaded from cache')
+        if len(cursor.execute(f"""SELECT * FROM cards WHERE name = '{self.clean_name}'""").fetchall()) > 0:
+            logger.info(f'Card {self.name} loaded from cache')
             connection.close()
             return False
 
-        self.get_info()
-        self.write_card()
+        try:
+            self.get_info()
+            self.write_card()
 
-        cursor.execute('INSERT INTO cards(name, path) VALUES(?,?)', (self.clean_name, f'{self.cache_dir}/{self.clean_name}.json'))
-        cursor.execute('COMMIT')
+            cursor.execute('INSERT INTO cards(name, path) VALUES(?,?)', (self.clean_name, f'{self.cache_dir}/{self.clean_name}.json'))
+            cursor.execute('COMMIT')
 
-        logging.info(f'Card {self.name} has been cached')
-        connection.close()
-        return True
+            logger.info(f'Card {self.name} has been cached')
+            connection.close()
+            return True
+
+        except:
+            logger.exception("could not cache card successfully")
+            return False
 
     def write_card(self):
         '''
@@ -158,10 +180,51 @@ class Card:
         '''
         Load card from cache directory
         '''
-        card_data =  json.loads(open(f'{self.cache_dir}/{self.clean_name}.json', 'r').read())
-        self.card_info = card_data
+
+        try:
+
+            try:
+                card_data =  json.loads(open(f'{self.cache_dir}/{self.clean_name}.json', 'r').read())
+                self.card_info = card_data
+            except:
+                logger.error(f"Unable to load {self.cache_file_name}. Attempting to regenerate cache.")
+                self.renew_cache()
+
+            
+
+        except:
+            logger.exception("Unable to load local cache or renew local cache")
+
+    def renew_cache(self):
+        '''
+        Clears out the card info and files and tries to renew the cache of it.
+        '''
+
+        db = f'{self.cache_dir}/cards.db'
+        connection = sqlite3.connect(db)
+        cursor = connection.cursor()
+
+        try:
+            # Delete from the card.db
+            cursor.execute(f"DELETE FROM cards WHERE name = '{self.clean_name}';")
+            cursor.execute('COMMIT;')
+            logger.info(f"Deleted {self.name} from local cards database")
+
+            try:
+                os.remove(self.cache_file_name)
+            except:
+                logger.info(f"Could not find {self.cache_file_name}, continuing with cache renewal")
+
+        except:
+            logger.exception(f"Error occurred when trying to renew card cache for {self.name}")
+
         
-        
+        connection.close()
+
+        try:
+            self.cache_card()
+        except:
+            logger.exception(f"Cannot renew cache for card {self.name}.")
             
         
 

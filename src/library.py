@@ -1,5 +1,8 @@
-import random, logging
+import random
 from . import card
+from . import setup_logger
+
+logger = setup_logger.logger
 
 
 class Library:
