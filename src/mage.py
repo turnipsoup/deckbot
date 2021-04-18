@@ -1,4 +1,5 @@
 from . import library, librarian, card, painter
+import logging
 
 class Mage:
     def __init__(self, message, config):
@@ -7,17 +8,19 @@ class Mage:
         self.known_methods = [
             "landavg",
             "nonlandavg",
-            "fullavg"
+            "fullavg",
+            "cardinfo"
         ]
 
         # Define and clean the deck
-        self.deck = deck = self.message.replace(self.config['call_name'], '').replace('landavg', '')
+        self.deck = deck = self.message.replace(self.config['call_name'], '')
         
         for method in self.known_methods:
             self.deck = self.deck.replace(method, '')
         
         self.deck =  [x for x in self.deck.split("\n") if len(x) > 1]
-        
+
+
         self.deck_library = library.Library(self.deck, self.config)
 
     def draw_hands(self):
@@ -92,5 +95,22 @@ class Mage:
 
         for hand in sample_hands:
                 final_mage_response += ', '.join(sorted(hand)) + '\n\n'
+
+        return final_mage_response
+
+    def get_card_info(self):
+        '''
+        Return info for a single card
+        '''
+        final_mage_response = 'Card Info\n--------\n'
+        mtgcard = card.Card(self.config, ' '.join(self.message.split()[2:]))
+
+        final_mage_response += 'Name: ' + mtgcard.name + '\n'
+        final_mage_response += '\t' + 'Types: ' + ', '.join(mtgcard.types) + '\n'
+        final_mage_response += '\t' + 'Mana Cost: ' + ''.join(mtgcard.mana_cost) + '\n'
+        final_mage_response += '\t' + 'CMC: ' + str(mtgcard.cmc) + '\n'
+        final_mage_response += '\t' + 'P/T: ' + str(mtgcard.power) + '/' + str(mtgcard.toughness) + '\n'
+        final_mage_response += '\t' + 'Text: ' + str(mtgcard.text) + '\n'
+        final_mage_response += '\t' + 'Rarity: ' + str(mtgcard.rarity) + '\n'
 
         return final_mage_response

@@ -1,6 +1,5 @@
 import requests, json, sqlite3, logging, string, os
 
-
 # Define some globals
 api_endpoint = 'https://api.magicthegathering.io'
 api_version = 'v1'
@@ -136,12 +135,12 @@ class Card:
             logging.info(f'Card {self.name} loaded from cache')
             connection.close()
             return False
-        
-        cursor.execute('INSERT INTO cards(name, path) VALUES(?,?)', (self.clean_name, f'{self.cache_dir}/{self.clean_name}.json'))
-        cursor.execute('COMMIT')
 
         self.get_info()
         self.write_card()
+
+        cursor.execute('INSERT INTO cards(name, path) VALUES(?,?)', (self.clean_name, f'{self.cache_dir}/{self.clean_name}.json'))
+        cursor.execute('COMMIT')
 
         logging.info(f'Card {self.name} has been cached')
         connection.close()

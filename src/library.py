@@ -1,5 +1,6 @@
-import random
+import random, logging
 from . import card
+
 
 class Library:
     """
@@ -22,14 +23,17 @@ class Library:
         self.deck = [x.strip() for x in deck]
         self.main_deck = []
         self.sideboard = []
-        
-        if "Sideboard" in deck:
-            sideboard_index = self.deck.index("Sideboard")
 
-            self.sideboard = [ (int(x.split()[0]), ' '.join(x.split()[1:-2])) for x in self.deck[sideboard_index+1:] ]
-            self.main_deck = [ (int(x.split()[0]), ' '.join(x.split()[1:-2])) for x in self.deck[1:sideboard_index] ] 
-        else:
-            self.main_deck = [ (int(x.split()[0]), ' '.join(x.split()[1:-2])) for x in self.deck[1:] ]
+        if "Deck" in deck:
+        
+            if "Sideboard" in deck:
+                sideboard_index = self.deck.index("Sideboard")
+
+                self.sideboard = [ (int(x.split()[0]), ' '.join(x.split()[1:-2])) for x in self.deck[sideboard_index+1:] ]
+                self.main_deck = [ (int(x.split()[0]), ' '.join(x.split()[1:-2])) for x in self.deck[1:sideboard_index] ] 
+            else:
+                self.main_deck = [ (int(x.split()[0]), ' '.join(x.split()[1:-2])) for x in self.deck[1:] ]
+        
 
         self.decklist = self.make_deck_list(self.main_deck)
         self.decklist_backup = self.decklist.copy() # Create a backup copy so we can restore
