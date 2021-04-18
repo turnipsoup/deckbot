@@ -20,9 +20,6 @@ class Mage:
         
         self.deck_library = library.Library(self.deck, self.config)
 
-        
-
-
     def draw_hands(self):
         '''
         Draw a number of hands equal to the iterations value in config
@@ -80,5 +77,20 @@ class Mage:
                 final_mage_response += f'\t{result}: {clean_averages[result]}\n'
             else:
                 final_mage_response += f'Total: {clean_averages[result]}\n'
+
+        return final_mage_response
+
+    def get_sample_hands(self, num_hands=5):
+        '''
+        Return X sample hands (7 card hands)
+        '''
+        hands = self.draw_hands()
+        self.deck_librarian = librarian.Librarian(hands, self.deck_library)
+        sample_hands = self.deck_librarian.sample_hands(num_hands)
+
+        final_mage_response = 'Sample Hands\n--------\n'
+
+        for hand in sample_hands:
+                final_mage_response += ', '.join(sorted(hand)) + '\n\n'
 
         return final_mage_response

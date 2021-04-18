@@ -37,7 +37,8 @@ async def on_message(message):
         if message.content.split()[1] == 'fullavg':
             deck_mage = mage.Mage(message.content, config)
             mage_response = deck_mage.get_land_average() + '\n\n'
-            mage_response += deck_mage.get_specific_average()
+            mage_response += deck_mage.get_specific_average() + '\n\n'
+            mage_response += deck_mage.get_sample_hands()
 
         await message.channel.send(mage_response)
 
