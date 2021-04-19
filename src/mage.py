@@ -44,13 +44,18 @@ class Mage:
         '''
         If the user requests an average of lands per hand
         '''
-        if not self.hands:
-            hands = self.draw_hands()
+        try:
+            if not self.hands:
+                hands = self.draw_hands()
+                self.deck_librarian = librarian.Librarian(self.hands, self.deck_library)
+        except:
+            logger.error("Something went wrong looking for a hand")
 
-            self.deck_librarian = librarian.Librarian(self.hands, self.deck_library)
-
-        if not self.deck_librarian:
-           self.deck_librarian = librarian.Librarian(self.hands, self.deck_library)
+        try:
+            if not self.deck_librarian:
+                self.deck_librarian = librarian.Librarian(self.hands, self.deck_library)
+        except:
+            logger.error("Something went making a librarian")
 
 
         averages = self.deck_librarian.average_all_lands()
