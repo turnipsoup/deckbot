@@ -17,7 +17,6 @@ if config["logging_directory"]:
             pass
         else:
             os.mkdir(config['logging_directory'])
-            logger.info(f"Created logging directory at {config['logging_directory']}")
 
 
         # Configure logging
