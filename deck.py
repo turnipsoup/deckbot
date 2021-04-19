@@ -11,13 +11,6 @@ logger.info("Successfully loaded config")
 discord_api_token = open(f'{config_dir}/bot_token.token').read()
 logger.info("Successfully loaded Discord API Token")
 
-# Make log directory if it does not exist:
-if os.path.isdir(config['logging_directory']):
-    pass
-else:
-    os.mkdir(config['logging_directory'])
-    logger.info(f"Created logging directory at {config['logging_directory']}")
-
 # Define known actions
 known_actions = [
     'fullavg', 'landavg', 'nonlandavg', 'cardinfo'
