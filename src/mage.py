@@ -22,6 +22,7 @@ class Mage:
         
         self.deck =  [x for x in self.deck.split("\n") if len(x) > 1]
         self.deck_library = library.Library(self.deck, self.config)
+        self.fully_loaded = False
         
 
     def draw_hands(self):
@@ -40,23 +41,23 @@ class Mage:
 
         self.hands = hands
 
+    def fully_load(self):
+        '''
+        Create the hands librarian, basically
+        '''
+
+        self.draw_hands()
+        self.deck_librarian = librarian.Librarian(self.hands, self.deck_library)
+
     def get_land_average(self):
         '''
         If the user requests an average of lands per hand
         '''
+
         try:
-            if not self.hands:
-                hands = self.draw_hands()
-                self.deck_librarian = librarian.Librarian(self.hands, self.deck_library)
+            self.fully_load()
         except:
             logger.error("Something went wrong looking for a hand")
-
-        try:
-            if not self.deck_librarian:
-                self.deck_librarian = librarian.Librarian(self.hands, self.deck_library)
-        except:
-            logger.error("Something went making a librarian")
-
 
         averages = self.deck_librarian.average_all_lands()
 
@@ -78,17 +79,9 @@ class Mage:
         '''
 
         try:
-            if not self.hands:
-                hands = self.draw_hands()
-                self.deck_librarian = librarian.Librarian(self.hands, self.deck_library)
+            self.fully_load()
         except:
             logger.error("Something went wrong looking for a hand")
-
-        try:
-            if not self.deck_librarian:
-                self.deck_librarian = librarian.Librarian(self.hands, self.deck_library)
-        except:
-            logger.error("Something went making a librarian")
 
         
         averages = self.deck_librarian.average_all_selected()
@@ -109,8 +102,7 @@ class Mage:
         '''
         Return X sample hands (7 card hands)
         '''
-        hands = self.draw_hands()
-        self.deck_librarian = librarian.Librarian(hands, self.deck_library)
+        self.fully_load()
         sample_hands = self.deck_librarian.sample_hands(num_hands)
 
         final_mage_response = 'Sample Hands\n--------\n'
