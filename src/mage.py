@@ -48,6 +48,8 @@ class Mage:
 
         self.draw_hands()
         self.deck_librarian = librarian.Librarian(self.hands, self.deck_library)
+        self.fully_loaded = True
+        logger.debug("Fully loaded the librarian")
 
     def get_land_average(self):
         '''
@@ -55,12 +57,12 @@ class Mage:
         '''
 
         try:
-            self.fully_load()
+            if not self.fully_loaded:
+                self.fully_load()
         except:
-            logger.error("Something went wrong looking for a hand")
+            logger.exception("Something went wrong looking for a hand")
 
         averages = self.deck_librarian.average_all_lands()
-
         clean_averages = self.deck_librarian.clean_values(averages)
 
         # Pretty it up even more
@@ -79,13 +81,13 @@ class Mage:
         '''
 
         try:
-            self.fully_load()
+            if not self.fully_loaded:
+                self.fully_load()
         except:
-            logger.error("Something went wrong looking for a hand")
+            logger.exception("Something went wrong looking for a hand")
 
         
         averages = self.deck_librarian.average_all_selected()
-
         clean_averages = self.deck_librarian.clean_values(averages)
 
         # Pretty it up even more
@@ -102,7 +104,13 @@ class Mage:
         '''
         Return X sample hands (7 card hands)
         '''
-        self.fully_load()
+
+        try:
+            if not self.fully_loaded:
+                self.fully_load()
+        except:
+            logger.exception("Something went wrong drawing hands")
+
         sample_hands = self.deck_librarian.sample_hands(num_hands)
 
         final_mage_response = 'Sample Hands\n--------\n'
