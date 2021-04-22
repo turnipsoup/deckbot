@@ -4,6 +4,10 @@ import sqlite3, os, logging, json, discord, sys
 # Instantiate logger
 logger = setup_logger.logger
 
+# Log version number
+with open("VERSION") as f:
+    logger.info(f"Starting Deckbot version {f.read()}")
+
 # Load config file
 config_dir = './config'
 config = json.loads(open(f"{config_dir}/config.json", "r").read())
@@ -61,6 +65,7 @@ async def on_message(message):
 
         except: # Throw the error into the logs and carry on
             logger.exception("Error caught processing the user request!")
+            logger.error(f"Failed message: {message.content}")
             mage_response = f'Error processing request, I am sorry!'
 
                     
