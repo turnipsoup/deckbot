@@ -53,6 +53,7 @@ async def on_message(message):
                 deck_mage = mage.Mage(message.content, config)
                 mage_response = deck_mage.get_land_average() + '\n\n'
                 mage_response += deck_mage.get_specific_average() + '\n\n'
+                mage_response += deck_mage.get_average_hand_cmc() + '\n\n'
                 mage_response += deck_mage.get_sample_hands()
 
             if message.content.split()[1] == 'cardinfo':

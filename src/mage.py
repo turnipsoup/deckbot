@@ -67,7 +67,7 @@ class Mage:
         clean_averages = self.deck_librarian.clean_values(averages)
 
         # Pretty it up even more
-        final_mage_response = f'Average Land Per Starting Hand Over {self.config["iterations"]} Draws\n--------\n'
+        final_mage_response = f'**Average Land Per Starting Hand Over {self.config["iterations"]} Draws**\n--------\n'
         for result in clean_averages.keys():
             if result != 'total':
                 final_mage_response += f'\t{result}: {clean_averages[result]}\n'
@@ -92,7 +92,7 @@ class Mage:
         clean_averages = self.deck_librarian.clean_values(averages)
 
         # Pretty it up even more
-        final_mage_response = f'Average Non-Land Card Per Starting Hand Over {self.config["iterations"]} Draws\n--------\n'
+        final_mage_response = f'**Average Non-Land Card Per Starting Hand Over {self.config["iterations"]} Draws**\n--------\n'
         for result in clean_averages.keys():
             if result != 'total':
                 final_mage_response += f'\t{result}: {clean_averages[result]}\n'
@@ -114,7 +114,7 @@ class Mage:
 
         sample_hands = self.deck_librarian.sample_hands(num_hands)
 
-        final_mage_response = 'Sample Hands\n--------\n'
+        final_mage_response = '**Sample Hands**\n--------\n'
 
         for hand in sample_hands:
                 final_mage_response += ', '.join(sorted(hand)) + '\n\n'
@@ -159,5 +159,28 @@ class Mage:
 
         except:
             logger.exception("Unable to define keyword!")
+
+        return final_mage_response
+
+    def get_average_hand_cmc(self):
+        """
+        Will get the average/total CMC for ALL hands in self.hands and return that
+        single value.
+        """
+
+        total_avg_cmc = 0
+        average_avg_cmc = 0
+
+        for hand in self.hands:
+            hand_cmcs = self.deck_librarian.cmc_details(hand)
+            average_avg_cmc += hand_cmcs[0]
+            total_avg_cmc += hand_cmcs[1]
+
+        total_avg_cmc = total_avg_cmc / len(self.hands)
+        average_avg_cmc = average_avg_cmc / len(self.hands)
+
+        final_mage_response = '**Hand CMC Averages**:\n--------\n'
+        final_mage_response += f'Average CMC Per Card In Hand: {average_avg_cmc}\n'
+        final_mage_response += f'Average Total Hand CMC: {total_avg_cmc}\n'
 
         return final_mage_response

@@ -92,3 +92,17 @@ class Librarian:
         Returns the top X hands of the self.hands.
         '''
         return self.hands[:num_hands]
+
+    def cmc_details(self, hand):
+        """
+        Returns a tuple containing the following:
+        (average_hand_cmc, total_hand_cmc)
+        """
+
+        cmc = 0
+        hand_length = len(hand)
+
+        for card in hand:
+            cmc += self.library.card_details[card].cmc
+        
+        return (cmc / hand_length, cmc)
