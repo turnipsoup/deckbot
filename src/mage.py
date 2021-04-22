@@ -1,5 +1,6 @@
 from . import library, librarian, card, painter
 from . import setup_logger
+import json
 
 logger = setup_logger.logger
 
@@ -22,6 +23,7 @@ class Mage:
         
         self.deck =  [x for x in self.deck.split("\n") if len(x) > 1]
         self.deck_library = library.Library(self.deck, self.config)
+        self.fully_loaded = False
         
 
     def draw_hands(self):
@@ -40,26 +42,28 @@ class Mage:
 
         self.hands = hands
 
+    def fully_load(self):
+        '''
+        Create the hands librarian, basically
+        '''
+
+        self.draw_hands()
+        self.deck_librarian = librarian.Librarian(self.hands, self.deck_library)
+        self.fully_loaded = True
+        logger.debug("Fully loaded the librarian")
+
     def get_land_average(self):
         '''
         If the user requests an average of lands per hand
         '''
-        try:
-            if not self.hands:
-                hands = self.draw_hands()
-                self.deck_librarian = librarian.Librarian(self.hands, self.deck_library)
-        except:
-            logger.error("Something went wrong looking for a hand")
 
         try:
-            if not self.deck_librarian:
-                self.deck_librarian = librarian.Librarian(self.hands, self.deck_library)
+            if not self.fully_loaded:
+                self.fully_load()
         except:
-            logger.error("Something went making a librarian")
-
+            logger.exception("Something went wrong looking for a hand")
 
         averages = self.deck_librarian.average_all_lands()
-
         clean_averages = self.deck_librarian.clean_values(averages)
 
         # Pretty it up even more
@@ -78,21 +82,13 @@ class Mage:
         '''
 
         try:
-            if not self.hands:
-                hands = self.draw_hands()
-                self.deck_librarian = librarian.Librarian(self.hands, self.deck_library)
+            if not self.fully_loaded:
+                self.fully_load()
         except:
-            logger.error("Something went wrong looking for a hand")
-
-        try:
-            if not self.deck_librarian:
-                self.deck_librarian = librarian.Librarian(self.hands, self.deck_library)
-        except:
-            logger.error("Something went making a librarian")
+            logger.exception("Something went wrong looking for a hand")
 
         
         averages = self.deck_librarian.average_all_selected()
-
         clean_averages = self.deck_librarian.clean_values(averages)
 
         # Pretty it up even more
@@ -109,8 +105,13 @@ class Mage:
         '''
         Return X sample hands (7 card hands)
         '''
-        hands = self.draw_hands()
-        self.deck_librarian = librarian.Librarian(hands, self.deck_library)
+
+        try:
+            if not self.fully_loaded:
+                self.fully_load()
+        except:
+            logger.exception("Something went wrong drawing hands")
+
         sample_hands = self.deck_librarian.sample_hands(num_hands)
 
         final_mage_response = 'Sample Hands\n--------\n'
@@ -140,5 +141,22 @@ class Mage:
         final_mage_response += '\t' + '**Text**: ' + str(mtgcard.text) + '\n'
         final_mage_response += '\t' + '**Rarity**: ' + str(mtgcard.rarity) + '\n'
         final_mage_response += '\t' + '**Image URL**: ' + str(mtgcard.image_url) + '\n'
+
+        return final_mage_response
+
+    def get_keyword_definition(self):
+        """
+        Define a keyword that is stored in <config-dir>/mtg-keyword-defs.json
+        """
+
+        try:
+            keywords = json.loads(open(self.config['mtg_keywords_file'], 'r').read())
+            mtgkeyword = ' '.join(self.message.split()[2:]).lower()
+
+            final_mage_response = f'**{mtgkeyword.capitalize()}**\n--------\n'
+            final_mage_response += f'> {keywords[mtgkeyword]}'
+
+        except:
+            logger.exception("Unable to define keyword!")
 
         return final_mage_response

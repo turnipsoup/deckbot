@@ -13,7 +13,7 @@ logger.info("Successfully loaded Discord API Token")
 
 # Define known actions
 known_actions = [
-    'fullavg', 'landavg', 'nonlandavg', 'cardinfo'
+    'fullavg', 'landavg', 'nonlandavg', 'cardinfo', 'define'
 ]
 
 # Initiate discord client
@@ -54,9 +54,13 @@ async def on_message(message):
             if message.content.split()[1] == 'cardinfo':
                 deck_mage = mage.Mage(message.content, config)
                 mage_response = deck_mage.get_card_info()
+            
+            if message.content.split()[1] == 'define':
+                deck_mage = mage.Mage(message.content, config)
+                mage_response = deck_mage.get_keyword_definition()
 
         except: # Throw the error into the logs and carry on
-            logger.exception("Error caught!")
+            logger.exception("Error caught processing the user request!")
             mage_response = f'Error processing request, I am sorry!'
 
                     
