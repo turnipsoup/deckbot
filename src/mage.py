@@ -139,6 +139,7 @@ class Mage:
         final_mage_response += '\t' + '**CMC**: ' + str(mtgcard.cmc) + '\n'
         final_mage_response += '\t' + '**P/T**: ' + str(mtgcard.power) + '/' + str(mtgcard.toughness) + '\n'
         final_mage_response += '\t' + '**Text**: ' + str(mtgcard.text) + '\n'
+        final_mage_response += '\t' + '**Flavor**: ' + str(mtgcard.flavor) + '\n'
         final_mage_response += '\t' + '**Rarity**: ' + str(mtgcard.rarity) + '\n'
         final_mage_response += '\t' + '**Image URL**: ' + str(mtgcard.image_url) + '\n'
 

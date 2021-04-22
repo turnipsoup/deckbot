@@ -100,6 +100,11 @@ class Card:
             self.text = self.card_info['text']
         except:
             self.text = None
+
+        try:
+            self.flavor = self.card_info['flavor']
+        except:
+            self.flavor = None
             
         try:
             self.power = self.card_info['power']
