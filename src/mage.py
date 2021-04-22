@@ -1,5 +1,6 @@
 from . import library, librarian, card, painter
 from . import setup_logger
+import json
 
 logger = setup_logger.logger
 
@@ -140,5 +141,22 @@ class Mage:
         final_mage_response += '\t' + '**Text**: ' + str(mtgcard.text) + '\n'
         final_mage_response += '\t' + '**Rarity**: ' + str(mtgcard.rarity) + '\n'
         final_mage_response += '\t' + '**Image URL**: ' + str(mtgcard.image_url) + '\n'
+
+        return final_mage_response
+
+    def get_keyword_definition(self):
+        """
+        Define a keyword that is stored in <config-dir>/mtg-keyword-defs.json
+        """
+
+        try:
+            keywords = json.loads(open(self.config['mtg_keywords_file'], 'r').read())
+            mtgkeyword = ' '.join(self.message.split()[2:]).lower()
+
+            final_mage_response = f'**{mtgkeyword.capitalize()}**\n--------\n'
+            final_mage_response += f'> {keywords[mtgkeyword]}'
+
+        except:
+            logger.exception("Unable to define keyword!")
 
         return final_mage_response
