@@ -1,6 +1,9 @@
 # Vscode
 .vscode/
 
+# MacOS
+.DS_Store
+
 # venv
 env/
 
