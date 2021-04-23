@@ -160,6 +160,11 @@ class Mage:
         except:
             logger.exception("Unable to define keyword!")
 
+            mtgkeyword = ' '.join(self.message.split()[2:]).lower()
+            final_mage_response = f'**{mtgkeyword.capitalize()}**\n--------\n'
+
+            final_mage_response += "There was an error defining the word, please check your spelling. If you are certain the spelling is correct, please contact the admin."
+
         return final_mage_response
 
     def get_average_hand_cmc(self):
