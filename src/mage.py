@@ -93,11 +93,16 @@ class Mage:
 
         # Pretty it up even more
         final_mage_response = f'**Average Non-Land Card Per Starting Hand Over {self.config["iterations"]} Draws**\n--------\n'
-        for result in clean_averages.keys():
-            if result != 'total':
-                final_mage_response += f'\t{result}: {clean_averages[result]}\n'
-            else:
-                final_mage_response += f'Total: {clean_averages[result]}\n'
+
+        try:
+            for result in clean_averages.keys():
+                if result != 'total':
+                    final_mage_response += f'\t{result}: {clean_averages[result]}\n'
+                else:
+                    final_mage_response += f'Total: {clean_averages[result]}\n'
+        except:
+            logger.exception("Something went wrong getting sample hands!")
+            final_mage_response += "Something went wrong getting sample hands. Please contact the admin!"
 
         return final_mage_response
 

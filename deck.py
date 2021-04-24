@@ -64,6 +64,10 @@ async def on_message(message):
                 deck_mage = mage.Mage(message.content, config)
                 mage_response = deck_mage.get_keyword_definition()
 
+            if message.content.split()[1] == 'version':
+                mage_response = "Version " + open("VERSION", "r").read()
+
+
         except: # Throw the error into the logs and carry on
             logger.exception("Error caught processing the user request!")
             logger.error(f"Failed message: {message.content}")
