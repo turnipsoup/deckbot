@@ -1,5 +1,5 @@
 from src import library, librarian, painter, card, mage, setup_logger
-import sqlite3, os, logging, json, discord, sys
+import sqlite3, os, logging, json, discord, sys, requests
 
 # Instantiate logger
 logger = setup_logger.logger
@@ -65,7 +65,17 @@ async def on_message(message):
                 mage_response = deck_mage.get_keyword_definition()
 
             if message.content.split()[1] == 'version':
-                mage_response = "Version " + open("VERSION", "r").read()
+                curr_version = open("VERSION", "r").read()
+
+                try:
+                    r = requests.get("https://raw.githubusercontent.com/turnipsoup/deckbot/main/VERSION").content.decode()
+
+                    mage_response = f"Your current version is {curr_version}\nThe most recent version is {r}"
+
+                except:
+                    logger.exception("Unable to get version number from github")
+
+                    mage_response = f"Your current version is {curr_version}\nThere was an issue getting the most recent version."
 
 
         except: # Throw the error into the logs and carry on
