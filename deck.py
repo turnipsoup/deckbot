@@ -18,7 +18,7 @@ logger.info("Successfully loaded Discord API Token")
 # Define known actions
 known_actions = [
     'fullavg', 'landavg', 'nonlandavg', 'cardinfo', 'define',
-    'update-keywords'
+    'update-keywords', 'version'
 ]
 
 # Initiate discord client
