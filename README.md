@@ -1,12 +1,12 @@
 # Deckbot
-
 Deckbot is a Discord bot made to access MTG: Arena formatted Decks and run statistics for the caller.
 
 ### Running
-
 You will want to have three directories as local bind-mounts to persist storage, as well as modify config and add your bot token:
 
 ```
+git clone https://github.com/turnipsoup/deckbot.git
+cd deckbot
 mkdir -p ./{logs,cache}
 docker run -d -v $(pwd)/logs:/app/deckbot/logs/ -v $(pwd)/cache:/app/deckbot/cache/ -v $(pwd)/config:/app/deckbot/config/ lel/deckbot
 ```
