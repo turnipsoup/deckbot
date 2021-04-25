@@ -1,38 +1,14 @@
 # Deckbot
-
 Deckbot is a Discord bot made to access MTG: Arena formatted Decks and run statistics for the caller.
 
-### Installing
-You will want to be using a Python3 Virtualenv
-
-Linux:
-```
-apt install python3-venv
-# or
-dnf install python3-venv
-```
-
-Mac:
-```
-brew install python3-venv
-```
-
-Next, you will want to clone the directory, `cd` into it, and then make your venv directory.
-
-```
-git clone git@github.com:turnipsoup/deckbot.git
-cd deckbot
-mkdir env
-python3 -m venv env
-source env/bin/active
-pip install -r requirements.txt
-```
-
 ### Running
+You will want to have three directories as local bind-mounts to persist storage, as well as modify config and add your bot token:
 
-Currently, its basic af...
 ```
-python deck.py
+git clone https://github.com/turnipsoup/deckbot.git
+cd deckbot
+mkdir -p ./{logs,cache}
+docker run -d -v $(pwd)/logs:/app/deckbot/logs/ -v $(pwd)/cache:/app/deckbot/cache/ -v $(pwd)/config:/app/deckbot/config/ lel/deckbot
 ```
 
 ### Configurations:
