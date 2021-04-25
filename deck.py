@@ -17,7 +17,8 @@ logger.info("Successfully loaded Discord API Token")
 
 # Define known actions
 known_actions = [
-    'fullavg', 'landavg', 'nonlandavg', 'cardinfo', 'define'
+    'fullavg', 'landavg', 'nonlandavg', 'cardinfo', 'define',
+    'update-keywords'
 ]
 
 # Initiate discord client
@@ -69,13 +70,23 @@ async def on_message(message):
 
                 try:
                     r = requests.get("https://raw.githubusercontent.com/turnipsoup/deckbot/main/VERSION").content.decode()
-
                     mage_response = f"Your current version is {curr_version}\nThe most recent version is {r}"
-
                 except:
                     logger.exception("Unable to get version number from github")
-
                     mage_response = f"Your current version is {curr_version}\nThere was an issue getting the most recent version."
+
+            if message.content.split()[1] == 'update-keywords':
+
+                try:
+                    deck_mage = mage.Mage(message.content, config)
+                    mage_response = deck_mage.update_keyword_definitions()
+                    logger.info("Updated keyword definitions")
+                except:
+                    mage_response = "There was an issue updating the keyword definitions."
+                    logger.exception(mage_response)
+
+            if message.content.split()[1] not in known_actions:
+                mage_response = 'Your command was not known. I know the following:' + '\n--------\n' +  '\n'.join(known_actions)
 
 
         except: # Throw the error into the logs and carry on
@@ -84,8 +95,7 @@ async def on_message(message):
             mage_response = f'Error processing request, I am sorry!'
 
                     
-        
-
+    
         await message.channel.send(mage_response)
 
 client.run(discord_api_token)

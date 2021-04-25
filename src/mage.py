@@ -1,6 +1,7 @@
 from . import library, librarian, card, painter
 from . import setup_logger
-import json
+import json, requests
+import bs4 as bs
 
 logger = setup_logger.logger
 
@@ -209,3 +210,34 @@ class Mage:
             final_mage_response = "There was an error defining CMC, please contact an admin!"
 
         return final_mage_response
+
+    def update_keyword_definitions(self):
+        # The wiki page
+        WIKI_PAGE = 'https://en.wikipedia.org/wiki/List_of_Magic:_The_Gathering_keywords'
+
+        # Get the wikipage initially
+        wiki = requests.get(WIKI_PAGE)
+        wikisoup = bs.BeautifulSoup(wiki.content, 'lxml')
+        def_soup = wikisoup.find('div', {'class': 'mw-parser-output'})
+        defs_list = []
+        defs_dict = {}
+        old_len = len(json.loads(open(self.config['mtg_keywords_file'], 'r').read()))
+
+        for keyword in def_soup:
+            defs_list.append(keyword)
+
+        for i in range(len(defs_list)):
+            if defs_list[i].name == 'h3':
+                keyword_name = defs_list[i].text.replace('[edit]','').lower()
+                keyword_def = defs_list[i+2].text
+                defs_dict[keyword_name] = keyword_def
+
+        new_len = len(defs_dict)
+        with open(self.config['mtg_keywords_file'], "w") as f:
+            f.write(json.dumps(defs_dict))
+
+        final_mage_response = f"Definitions successfully updated. Added {new_len - old_len} keyword definitions."
+
+        return final_mage_response
+
+
