@@ -8,7 +8,7 @@ You will want to have three directories as local bind-mounts to persist storage,
 git clone https://github.com/turnipsoup/deckbot.git
 cd deckbot
 mkdir -p ./{logs,cache}
-docker run -d -v $(pwd)/logs:/app/deckbot/logs/ -v $(pwd)/cache:/app/deckbot/cache/ -v $(pwd)/config:/app/deckbot/config/ lel/deckbot
+docker run -d -v $(pwd)/logs:/app/deckbot/logs/ -v $(pwd)/cache:/app/deckbot/cache/ -v $(pwd)/config:/app/deckbot/config/ galleywest/deckbot:latest
 ```
 
 ### Configurations:
