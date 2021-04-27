@@ -38,8 +38,8 @@ async def on_message(message):
 
         try:
 
-            logger.info(f'Request {message.content.split()[1]} initiated by {message.author}')
-            logger.debug(f'Request: {message.content}')
+            logger.info(f'Request {message.content.split()[1]} initiated by {message.author} from {message.guild}')
+            logger.info(f'Request: {message.content}')
 
             # Handle requests for land averages
             if message.content.split()[1] == 'landavg':

@@ -145,12 +145,6 @@ class Card:
         connection = sqlite3.connect(db)
         cursor = connection.cursor()
 
-        try:
-            cursor.execute('''CREATE TABLE cards (name TEXT, path TEXT)''')
-            logger.info(f'Created database {db}')
-        except:
-            logger.debug(f'Database {db} already exists, loading!')
-
         select = f"""SELECT * FROM cards WHERE name = '{self.clean_name}'"""
 
         if len(cursor.execute(f"""SELECT * FROM cards WHERE name = '{self.clean_name}'""").fetchall()) > 0:

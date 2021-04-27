@@ -1,6 +1,6 @@
 from . import library, librarian, card, painter
 from . import setup_logger
-import json, requests
+import json, requests, sqlite3
 import bs4 as bs
 
 logger = setup_logger.logger
@@ -22,6 +22,21 @@ class Mage:
         for method in self.known_methods:
             self.deck = self.deck.replace(method, '')
         
+        # Initiate cards.db if it does not exist
+        db = f'{self.config["cache_dir"]}/cards.db'
+        connection = sqlite3.connect(db)
+        cursor = connection.cursor()
+
+        try:
+            cursor.execute('''CREATE TABLE cards (name TEXT, path TEXT)''')
+            logger.info(f'Created database {db}')
+            connection.close()
+        except:
+            logger.debug(f'Database {db} already exists, loading!')
+            connection.close()
+
+
+        # Library
         self.deck =  [x for x in self.deck.split("\n") if len(x) > 1]
         self.deck_library = library.Library(self.deck, self.config)
         self.fully_loaded = False
