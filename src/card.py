@@ -31,9 +31,12 @@ class Card:
         card_endpoint = f'{api_endpoint}/{api_version}/cards?name={self.name}'
         
         try:
+
             r = requests.get(card_endpoint).json()['cards']
             logger.info(f"Recieved info from {card_endpoint} of length {len(r)}")
 
+            if len(r) == 0:
+                raise
 
             for card in r:
                 logger.debug("Iterating over all cards returned")
@@ -164,7 +167,7 @@ class Card:
             return True
 
         except:
-            logger.exception("could not cache card successfully")
+            logger.exception("Could not cache card successfully")
             return False
 
     def write_card(self):
@@ -188,8 +191,6 @@ class Card:
             except:
                 logger.error(f"Unable to load {self.cache_file_name}. Attempting to regenerate cache.")
                 self.renew_cache()
-
-            
 
         except:
             logger.exception("Unable to load local cache or renew local cache")

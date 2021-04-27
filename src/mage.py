@@ -171,7 +171,8 @@ class Mage:
             final_mage_response += '\t' + '**Image URL**: ' + str(mtgcard.image_url) + '\n'
 
         except:
-            logger.exception(f"There was an error defining card {mtgcard}!")
+            logger.exception(f"There was an error defining card {mtgcard.name}!")
+            final_mage_response = f"There was an error requesting {mtgcard.name}. Please ensure it exists, and your spelling is correct."
 
         return final_mage_response
 
