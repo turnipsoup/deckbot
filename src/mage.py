@@ -228,31 +228,36 @@ class Mage:
         return final_mage_response
 
     def update_keyword_definitions(self):
-        # The wiki page
-        WIKI_PAGE = 'https://en.wikipedia.org/wiki/List_of_Magic:_The_Gathering_keywords'
 
-        # Get the wikipage initially
-        wiki = requests.get(WIKI_PAGE)
-        wikisoup = bs.BeautifulSoup(wiki.content, 'lxml')
-        def_soup = wikisoup.find('div', {'class': 'mw-parser-output'})
-        defs_list = []
-        defs_dict = {}
-        old_len = len(json.loads(open(self.config['mtg_keywords_file'], 'r').read()))
+        try:
+            # The wiki page
+            WIKI_PAGE = 'https://en.wikipedia.org/wiki/List_of_Magic:_The_Gathering_keywords'
 
-        for keyword in def_soup:
-            defs_list.append(keyword)
+            # Get the wikipage initially
+            wiki = requests.get(WIKI_PAGE)
+            wikisoup = bs.BeautifulSoup(wiki.content, 'lxml')
+            def_soup = wikisoup.find('div', {'class': 'mw-parser-output'})
+            defs_list = []
+            defs_dict = {}
+            old_len = len(json.loads(open(self.config['mtg_keywords_file'], 'r').read()))
 
-        for i in range(len(defs_list)):
-            if defs_list[i].name == 'h3':
-                keyword_name = defs_list[i].text.replace('[edit]','').lower()
-                keyword_def = defs_list[i+2].text
-                defs_dict[keyword_name] = keyword_def
+            for keyword in def_soup:
+                defs_list.append(keyword)
 
-        new_len = len(defs_dict)
-        with open(self.config['mtg_keywords_file'], "w") as f:
-            f.write(json.dumps(defs_dict))
+            for i in range(len(defs_list)):
+                if defs_list[i].name == 'h3':
+                    keyword_name = defs_list[i].text.replace('[edit]','').lower()
+                    keyword_def = defs_list[i+2].text
+                    defs_dict[keyword_name] = keyword_def
 
-        final_mage_response = f"Definitions successfully updated. Added {new_len - old_len} keyword definitions."
+            new_len = len(defs_dict)
+            with open(self.config['mtg_keywords_file'], "w") as f:
+                f.write(json.dumps(defs_dict))
+
+            final_mage_response = f"Definitions successfully updated. Added {new_len - old_len} keyword definitions. There are a total of {new_len} keywords."
+        except:
+            old_len = len(json.loads(open(self.config['mtg_keywords_file'], 'r').read()))
+            final_mage_response = f"Something went wrong renewing the definitions.  There are currently {old_len} keywords." 
 
         return final_mage_response
 

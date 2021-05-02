@@ -41,12 +41,19 @@ class Card:
             for card in r:
                 logger.debug("Iterating over all cards returned")
                 logger.debug(card)
+                
+                if "//" in card['name']:
+                    if self.name in card['name']:
+                        self.card_info = card
+                        logger.debug("Card info with matching name found, is dual faced.")
+                        break
+
+
                 if self.cleanup_name(card['name']) == self.clean_name:
                     self.card_info = card
                     logger.debug("Card info with matching name found")
                     break
 
-            logger.info(f'Card {self.name} fetched from the API.')
         except:
             logger.error(f'Failed to fetch card {self.name} from {card_endpoint}')
 

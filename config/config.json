@@ -6,5 +6,6 @@
     "logging_directory": "./logs",
     "logging_max_file_size": 10000000,
     "logging_backup_count": 5,
-    "mtg_keywords_file": "./config/mtg-keyword-defs.json"
+    "mtg_keywords_file": "./config/mtg-keyword-defs.json",
+    "blocked_commands": []
 }
