@@ -55,7 +55,7 @@ class Card:
                     break
 
         except:
-            logger.ecept(f'Failed to fetch card {self.name} from {card_endpoint}')
+            logger.error(f'Failed to fetch card {self.name} from {card_endpoint}')
 
     def fill_vals(self, cache_dict={}):
         '''
