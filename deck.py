@@ -18,7 +18,7 @@ logger.info("Successfully loaded Discord API Token")
 # Define known actions
 known_actions = [
     'fullavg', 'landavg', 'nonlandavg', 'cardinfo', 'define',
-    'update-keywords', 'version'
+    'update-keywords', 'version' 
 ]
 
 banned_actions = config['blocked_commands']
@@ -95,14 +95,13 @@ async def on_message(message):
 
                 if message.content.split()[1] not in known_actions:
                     mage_response = 'Your command was not known. I know the following:' + '\n--------\n' +  '\n'.join(known_actions)
-
+                
 
         except: # Throw the error into the logs and carry on
             logger.exception("Error caught processing the user request!")
             logger.error(f"Failed message: {message.content}")
             mage_response = f'Error processing request, I am sorry!'
 
-                        
     
         await message.channel.send(mage_response)
 
